@@ -1,7 +1,0 @@
-02:59:38 **** Incremental Build of configuration x86_64-debug for project Signals_Handling ****
-make -j16 all 
-q++ -Vgcc_ntox86_64_cxx -c -Wp,-MMD,build/x86_64-debug/src/Signals_Handling.d,-MT,build/x86_64-debug/src/Signals_Handling.o -o build/x86_64-debug/src/Signals_Handling.o  -Wall -fmessage-length=0 -g -O0 -fno-builtin  src/Signals_Handling.cpp
-q++ -Vgcc_ntox86_64_cxx -o build/x86_64-debug/Signals_Handling   build/x86_64-debug/src/Signals_Handling.o  
-
-02:59:44 Build Finished. 0 errors, 0 warnings. (took 6s.187ms)
-

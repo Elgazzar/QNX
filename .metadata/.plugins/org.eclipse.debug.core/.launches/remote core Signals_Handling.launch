@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<launchConfiguration type="com.qnx.tools.ide.qde.ui.QDERemoteCoreLaunch">
-    <booleanAttribute key="com.qnx.tools.ide.qde.core.LOAD_FROM_TARGET" value="true"/>
-    <stringAttribute key="com.qnx.tools.ide.qde.core.REMOTE_COREFILE_PATH" value="/data/var/dumper/Signals_Handling.core"/>
-    <stringAttribute key="com.qnx.tools.ide.qde.core.TARGET_ATTR" value="vm1"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="C:\QNX\ide-8.0-workspace\Signals_Handling\build\x86_64-debug\Signals_Handling"/>
-    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="Signals_Handling"/>
-</launchConfiguration>

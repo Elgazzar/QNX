@@ -1,7 +1,0 @@
-00:48:04 **** Build of configuration x86_64-debug for project Endless_High_Low_Prioriy_Threads ****
-make -j16 all 
-make: *** No rule to make target 'all'.  Stop.
-"make -j16 all" terminated with exit code 2. Build might be incomplete.
-
-00:48:05 Build Failed. 1 errors, 0 warnings. (took 444ms)
-
