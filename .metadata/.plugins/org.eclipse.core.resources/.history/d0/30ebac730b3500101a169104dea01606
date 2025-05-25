@@ -1,0 +1,19 @@
+#include <iostream>
+#include <pthread.h>
+#include <signal.h>
+
+
+sigset_t signal_set;
+
+using namespace std;
+
+int main() {
+
+	sigemptyset(&signal_set);
+    // Add signals you want to handle (e.g., SIGINT, SIGTERM)
+    sigaddset(&signal_set, SIGINT);
+    sigaddset(&signal_set, SIGTERM);
+
+	cout << "Hello World!!!" << endl; // prints Hello World!!!
+	return 0;
+}

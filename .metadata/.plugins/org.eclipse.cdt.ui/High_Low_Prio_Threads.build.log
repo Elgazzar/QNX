@@ -1,0 +1,7 @@
+01:14:17 **** Incremental Build of configuration x86_64-debug for project High_Low_Prio_Threads ****
+make -j16 all 
+qcc -Vgcc_ntox86_64 -c -Wp,-MMD,build/x86_64-debug/src/High_Low_Prio_Threads.d,-MT,build/x86_64-debug/src/High_Low_Prio_Threads.o -o build/x86_64-debug/src/High_Low_Prio_Threads.o  -Wall -fmessage-length=0 -g -O0 -fno-builtin  src/High_Low_Prio_Threads.c
+qcc -Vgcc_ntox86_64 -o build/x86_64-debug/High_Low_Prio_Threads   build/x86_64-debug/src/High_Low_Prio_Threads.o  
+
+01:14:17 Build Finished. 0 errors, 0 warnings. (took 464ms)
+

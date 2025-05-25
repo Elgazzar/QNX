@@ -1,0 +1,7 @@
+22:07:14 **** Build of configuration x86_64-debug for project Hello_World ****
+make -j16 all 
+qcc -Vgcc_ntox86_64 -c -Wp,-MMD,build/x86_64-debug/src/Hello_World.d,-MT,build/x86_64-debug/src/Hello_World.o -o build/x86_64-debug/src/Hello_World.o  -Wall -fmessage-length=0 -g -O0 -fno-builtin  src/Hello_World.c
+qcc -Vgcc_ntox86_64 -o build/x86_64-debug/Hello_World   build/x86_64-debug/src/Hello_World.o  
+
+22:07:16 Build Finished. 0 errors, 0 warnings. (took 2s.486ms)
+

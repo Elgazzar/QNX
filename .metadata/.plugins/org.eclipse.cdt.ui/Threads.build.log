@@ -1,0 +1,6 @@
+01:11:06 **** Incremental Build of configuration x86_64-debug for project Threads ****
+make -j16 all 
+make: Nothing to be done for 'all'.
+
+01:11:07 Build Finished. 0 errors, 0 warnings. (took 215ms)
+
