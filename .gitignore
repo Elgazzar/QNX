@@ -1,2 +1,10 @@
 .metadata/
 vm1/
+
+# Virtual Machine folders
+QNX_vbox/
+QNX_vm/
+
+# Build artifacts and directories
+*.o
+build/

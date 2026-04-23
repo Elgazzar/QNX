@@ -1,73 +1,77 @@
 #include <iostream>
 using namespace std;
 
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/syspage.h>
 #include <time.h>
 #include <unistd.h>
-#include <pthread.h>
-#include <sys/syspage.h>
 
 int num_cpus;
 
-static void *worker(void *arg)
-{
-unsigned long last = clock_gettime_mon_ns();
-for (;;) {
-sleep(1);
-unsigned long now = clock_gettime_mon_ns();
-printf("Low Priority Task Slept for %lums\n", (now - last) / 1000000UL);
-last = now;
-}
-return NULL;
-}
-
-static void *high_priority(void *arg)
-{
-unsigned long last = clock_gettime_mon_ns();
-for (;;) {
-sleep(1);
-unsigned long now = clock_gettime_mon_ns();
-printf("High Priority Task Slept for %lums\n", (now - last) / 1000000UL);
-printf("Number of CPUS is  %d\n", num_cpus );
-last = now;
-}
-return NULL;
+static void *worker(void *arg) {
+  unsigned long last = clock_gettime_mon_ns();
+  for (;;) {
+    sleep(1);
+    unsigned long now = clock_gettime_mon_ns();
+    printf("Low Priority Task Slept for %lums\n", (now - last) / 1000000UL);
+    last = now;
+  }
+  return NULL;
 }
 
- int main(int argc, char **argv)
-{
+static void *high_priority(void *arg) {
+  unsigned long last = clock_gettime_mon_ns();
+  for (;;) {
+    sleep(1);
+    unsigned long now = clock_gettime_mon_ns();
+    printf("High Priority Task Slept for %lums\n", (now - last) / 1000000UL);
+    printf("Number of CPUS is  %d\n", num_cpus);
+    last = now;
+  }
+  return NULL;
+}
 
-	 num_cpus = _syspage_ptr->num_cpu;
- // Attribute structure for a high-priority thread.
- pthread_attr_t attr;
- pthread_attr_init(&attr);
- pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
+int main(int argc, char **argv) {
 
- struct sched_param sched = { .sched_priority = 63 };
- pthread_attr_setschedparam(&attr, &sched);
+  num_cpus = _syspage_ptr->num_cpu;
+  // Attribute structure for a high-priority thread.
+  pthread_attr_t high_priority_attr;
+  pthread_attr_t low_priority_attr;
 
- // Create the high-priority thread.
- pthread_t tids[11];
- int rc;
- //rc = pthread_create(&tids[0], &attr, high_priority, NULL);
- rc = pthread_create(&tids[0], NULL, high_priority, NULL);
- if (rc != 0) {
- fprintf(stderr, "pthread_create: %s\n", strerror(rc));
- return EXIT_FAILURE;
- }
+  pthread_attr_init(&high_priority_attr);
+  pthread_attr_setinheritsched(&high_priority_attr, PTHREAD_EXPLICIT_SCHED);
 
- // Create worker threads.
- rc = pthread_create(&tids[1], NULL, worker, NULL);
- if (rc != 0) {
- fprintf(stderr, "pthread_create: %s\n", strerror(rc));
- return EXIT_FAILURE;
- }
+  pthread_attr_init(&low_priority_attr);
+  pthread_attr_setinheritsched(&low_priority_attr, PTHREAD_EXPLICIT_SCHED);
 
- // Wait for workers to finish.
- pthread_join(tids[0], NULL);
- pthread_join(tids[1], NULL);
+  struct sched_param sched_high = {.sched_priority = 63};
+  struct sched_param sched_low = {.sched_priority = 25};
+  pthread_attr_setschedparam(&high_priority_attr, &sched_high);
+  pthread_attr_setschedparam(&low_priority_attr, &sched_low);
 
- return EXIT_SUCCESS;
- }
+  // Create the high-priority thread.
+  pthread_t tids[11];
+  int rc;
+  rc = pthread_create(&tids[0], &high_priority_attr, high_priority, NULL);
+  // rc = pthread_create(&tids[0], NULL, high_priority, NULL);
+  if (rc != 0) {
+    fprintf(stderr, "pthread_create: %s\n", strerror(rc));
+    return EXIT_FAILURE;
+  }
+
+  // Create worker threads.
+  rc = pthread_create(&tids[1], &low_priority_attr, worker, NULL);
+  if (rc != 0) {
+    fprintf(stderr, "pthread_create: %s\n", strerror(rc));
+    return EXIT_FAILURE;
+  }
+
+  // Wait for workers to finish.
+  pthread_join(tids[0], NULL);
+  pthread_join(tids[1], NULL);
+
+  return EXIT_SUCCESS;
+}
