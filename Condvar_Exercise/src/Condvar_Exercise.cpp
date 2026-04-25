@@ -28,14 +28,14 @@
  *
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/neutrino.h>
+#include <errno.h>
 #include <pthread.h>
 #include <sched.h>
-#include <errno.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/neutrino.h>
+#include <unistd.h>
 
 /*
  *  our global variables.
@@ -52,78 +52,115 @@ pthread_cond_t cond;
 
 void *state_0(void *);
 void *state_1(void *);
+void *state_2(void *);
+void *state_3(void *);
 
-int main()
-{
-	int ret;
+int main() {
+  int ret;
 
-	ret = pthread_mutex_init(&mutex, NULL );
-	if (ret != EOK)
-	{
-		fprintf(stderr, "pthread_mutex_init failed: %s\n", strerror(ret));
-		exit(EXIT_FAILURE);
-	}
+  ret = pthread_mutex_init(&mutex, NULL);
+  if (ret != EOK) {
+    fprintf(stderr, "pthread_mutex_init failed: %s\n", strerror(ret));
+    exit(EXIT_FAILURE);
+  }
 
-	ret = pthread_cond_init(&cond, NULL );
-	if (ret != EOK)
-	{
-		fprintf(stderr, "pthread_cond_init failed: %s\n", strerror(ret));
-		exit(EXIT_FAILURE);
-	}
+  ret = pthread_cond_init(&cond, NULL);
+  if (ret != EOK) {
+    fprintf(stderr, "pthread_cond_init failed: %s\n", strerror(ret));
+    exit(EXIT_FAILURE);
+  }
 
-	state = 0;
+  state = 0;
 
-	pthread_create(NULL, NULL, state_1, NULL);
-	pthread_create(NULL, NULL, state_0, NULL);
+  pthread_create(NULL, NULL, state_3, NULL);
+  pthread_create(NULL, NULL, state_2, NULL);
+  pthread_create(NULL, NULL, state_1, NULL);
+  pthread_create(NULL, NULL, state_0, NULL);
 
-	sleep(20); // let the threads run
-	printf("main, exiting\n");
-	return 0;
+  sleep(20); // let the threads run
+  printf("main, exiting\n");
+  return 0;
 }
 
 /*
  *  state 0 handler (was producer)
  */
 
-void *
-state_0(void *arg)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&mutex);
-		while (state != 0)
-		{
-			pthread_cond_wait(&cond, &mutex);
-		}
-		printf("transit 0 -> 1\n");
-		state = 1;
-		pthread_cond_signal(&cond);
-		pthread_mutex_unlock(&mutex);
-		/* don't chew all the CPU time */
-		delay(100);
-	}
-	return (NULL);
+void *state_0(void *arg) {
+  while (1) {
+    pthread_mutex_lock(&mutex);
+    while (state != 0) {
+      pthread_cond_wait(&cond, &mutex);
+    }
+    printf("transit 0 -> 1\n");
+    state = 1;
+    pthread_cond_broadcast(&cond); // Use broadcast since multiple threads wait on cond
+    pthread_mutex_unlock(&mutex);
+    /* don't chew all the CPU time */
+    delay(100);
+  }
+  return (NULL);
 }
 
 /*
  *  state 1 handler (was consumer)
  */
 
-void *
-state_1(void *arg)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&mutex);
-		while (state != 1)
-		{
-			pthread_cond_wait(&cond, &mutex);
-		}
-		printf("transit 1 -> 0\n");
-		state = 0;
-		pthread_cond_signal(&cond);
-		pthread_mutex_unlock(&mutex);
-	}
-	return (NULL);
+void *state_1(void *arg) {
+  int internal_var = 0; // Internal variable for state 1
+  while (1) {
+    pthread_mutex_lock(&mutex);
+    while (state != 1) {
+      pthread_cond_wait(&cond, &mutex);
+    }
+    
+    internal_var++;
+    if (internal_var % 2 == 0) {
+      printf("transit 1 -> 2\n");
+      state = 2;
+    } else {
+      printf("transit 1 -> 3\n");
+      state = 3;
+    }
+    
+    pthread_cond_broadcast(&cond);
+    pthread_mutex_unlock(&mutex);
+  }
+  return (NULL);
 }
 
+/*
+ *  state 2 handler (was consumer)
+ */
+
+void *state_2(void *arg) {
+  while (1) {
+    pthread_mutex_lock(&mutex);
+    while (state != 2) {
+      pthread_cond_wait(&cond, &mutex);
+    }
+    printf("transit 2 -> 0\n");
+    state = 0;
+    pthread_cond_broadcast(&cond);
+    pthread_mutex_unlock(&mutex);
+  }
+  return (NULL);
+}
+
+/*
+ *  state 3 handler (was consumer)
+ */
+
+void *state_3(void *arg) {
+  while (1) {
+    pthread_mutex_lock(&mutex);
+    while (state != 3) {
+      pthread_cond_wait(&cond, &mutex);
+    }
+    printf("transit 3 -> 0\n");
+    state = 0;
+    pthread_cond_broadcast(&cond);
+    pthread_mutex_unlock(&mutex);
+  }
+  return (NULL);
+}
