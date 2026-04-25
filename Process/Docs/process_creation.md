@@ -13,6 +13,8 @@ pid_t fork(void);
 `fork()` is the traditional UNIX way to create a new process. It creates a new process (the "child") by duplicating the calling process (the "parent").
 *   The child process is an exact copy of the parent process, including its memory space, file descriptors, and CPU state, but it has a unique Process ID (PID).
 *   `fork()` returns twice: once in the parent (returning the PID of the child) and once in the child (returning `0`).
+The Child Process reaches the if statement, sees that pid == 0, and executes the else if block.
+The Parent Process reaches the same if statement at roughly the same time, sees that pid > 0, and executes the else block.
 
 **Drawbacks (Especially in QNX/RTOS):**
 *   **Performance:** Copying the entire memory space of a large parent process is extremely expensive, even with "Copy-on-Write" optimizations.
