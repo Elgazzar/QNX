@@ -41,7 +41,7 @@
 
 volatile unsigned var1;
 volatile unsigned var2;
-// pthread_mutex_t mutex;
+pthread_mutex_t mutex;
 
 void *update_thread(void *);
 
@@ -57,7 +57,7 @@ int main() {
 
   var1 = var2 = 0; /* initialize to known values */
 
-  // pthread_mutex_init(&mutex, NULL);
+  pthread_mutex_init(&mutex, NULL);
 
   printf("mutex_sync:  starting; creating threads\n");
 
@@ -168,12 +168,12 @@ void *update_thread(void *i) {
 
     /* do some work here */
     do_work();
-    // pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutex);
     var1 += 2;
     var1--;
     var2 += 2;
     var2--;
-    // pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&mutex);
   }
   return (NULL);
 }
