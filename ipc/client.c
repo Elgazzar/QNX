@@ -44,8 +44,8 @@ int main(int argc, char* argv[])
 	printf("attempting to establish connection with server pid: %d, chid %d\n", server_pid,
 			server_chid);
 
-	//PUT CODE HERE to establish a connection to the server's channel, store the
-	//connection id in the variable 'coid'
+	// nd=0 (local node), server_pid and server_chid identify the server's channel
+	coid = ConnectAttach(0, server_pid, server_chid, _NTO_SIDE_CHANNEL, 0);
 
 	if (coid == -1)
 	{ //was there an error attaching to server?
@@ -57,7 +57,8 @@ int main(int argc, char* argv[])
 	strlcpy(msg.string_to_cksum, argv[3], sizeof(msg.string_to_cksum));
 	printf("Sending string: %s\n", msg.string_to_cksum);
 
-	//PUT CODE HERE to send message to server and get the reply
+	// Send msg to server, and receive the checksum reply directly into incoming_checksum
+	status = MsgSend(coid, &msg, sizeof(msg), &incoming_checksum, sizeof(incoming_checksum));
 
 	if (status == -1)
 	{ //was there an error sending to server?

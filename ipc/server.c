@@ -31,7 +31,7 @@ int main(void)
 	int status;
 	int checksum;
 
-	//PUT CODE HERE to create a channel, store channel id in the chid variable
+	chid = ChannelCreate(0); //create a channel for receiving messages
 	if (chid == -1)
 	{ //was there an error creating the channel?
 		perror("ChannelCreate()"); //look up the errno code and print
@@ -44,7 +44,7 @@ int main(void)
 
 	while (1)
 	{
-		//PUT CODE HERE to receive msg from client
+		rcvid = MsgReceive(chid, &msg, sizeof(msg), NULL); //block waiting for a client message
 
 		if (rcvid == -1)
 		{ //was there an error receiving msg?
@@ -52,9 +52,10 @@ int main(void)
 			exit(EXIT_FAILURE); //give up
 		}
 
-		//PUT CODE HERE to calculate the check sum by calling calculate_checksum()
+		checksum = calculate_checksum(msg.string_to_cksum); //calculate checksum of received string
+		printf("Calculated checksum: %d for string: \"%s\"\n", checksum, msg.string_to_cksum);
 
-		//PUT CODE HERE TO reply to client with checksum, store the return status in status
+		status = MsgReply(rcvid, EOK, &checksum, sizeof(checksum)); //reply to client with checksum
 
 		if (status == -1)
 		{
