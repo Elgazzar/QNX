@@ -12,6 +12,10 @@ Message passing in QNX always follows a strict Client/Server model:
 4.  **The Server Replies:** The server receives the data, processes it, and sends a reply.
 5.  **The Client Wakes Up:** Only after the server replies does the client wake up and receive the response data.
 
+> [!NOTE] 
+> **Adaptive AUTOSAR (ara::com)**
+> If you are running an Adaptive AUTOSAR stack on a QNX operating system, this exact message passing mechanism is heavily used under the hood! The local IPC (Inter-Process Communication) binding for `ara::com` relies on QNX `MsgSend`, `MsgReceive`, and `MsgReply` for fast communication between different Adaptive Applications (AAs) on the same ECU. However, the AUTOSAR middleware abstracts this entirely. You interact with generated C++ Proxies and Skeletons, and the middleware translates those calls into native QNX message passing payloads automatically.
+
 ---
 
 ## The Core APIs
