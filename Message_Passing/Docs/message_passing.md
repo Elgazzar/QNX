@@ -22,29 +22,50 @@ Message passing in QNX always follows a strict Client/Server model:
 
 ### 1. `ChannelCreate` (Server Side)
 **Signature:** `int ChannelCreate(unsigned flags);`
-**Description:** Creates a communication channel that clients can connect to. Returns a Channel ID (`chid`).
+**Description:** Creates a communication channel that clients can connect to. Returns a Channel ID (`chid`), or `-1` on error.
+**Parameters:**
+*   `flags`: Controls channel behavior. Common values:
+    *   `0`: Default channel, accessible by any process.
+    *   `_NTO_CHF_PRIVATE`: Restricts access so only threads within the same process can connect to this channel.
 
 ### 2. `ConnectAttach` (Client Side)
 **Signature:** `int ConnectAttach(uint32_t nd, pid_t pid, int chid, unsigned index, int flags);`
-**Description:** Creates a connection (`coid`) from the client to the server's channel (`chid`). 
+**Description:** Creates a connection (`coid`) from the client to the server's channel (`chid`). Returns a Connection ID, or `-1` on error.
+**Parameters:**
+*   `nd`: Node descriptor. Use `0` for the local machine.
+*   `pid`: The Process ID of the server process.
+*   `chid`: The Channel ID (`chid`) of the server's channel.
+*   `index`: Use `_NTO_SIDE_CHANNEL` to create a side channel connection.
+*   `flags`: Additional flags. Typically `0`.
+
 *Note: In complex multi-process systems, you typically use `name_attach` and `name_open` to find channels by string names instead of raw IDs.*
 
 ### 3. `MsgReceive` (Server Side)
 **Signature:** `int MsgReceive(int chid, void *rmsg, int rbytes, struct _msg_info *info);`
-**Description:** The server calls this to wait for a message. 
-*   If no client has sent a message yet, the server goes to sleep.
-*   When a message arrives, it copies the client's data into the `rmsg` buffer.
+**Description:** The server calls this to wait for a message. Puts the server into **Receive Blocked** state until a client sends a message.
+**Parameters:**
+*   `chid`: The Channel ID created by `ChannelCreate`. The server listens on this channel.
+*   `rmsg`: A pointer to the buffer where the incoming message data will be copied into.
+*   `rbytes`: The size of the `rmsg` buffer in bytes. Typically `sizeof(your_msg_struct)`.
+*   `info`: A pointer to a `_msg_info` struct for extra message metadata (sender's PID, etc.). Pass `NULL` if not needed.
 *   **Returns:** A Receive ID (`rcvid`). This ID is mathematically linked to the specific client that sent the message. The server *must* use this exact `rcvid` to reply to that specific client.
 
 ### 4. `MsgSend` (Client Side)
 **Signature:** `int MsgSend(int coid, const void *smsg, int sbytes, void *rmsg, int rbytes);`
-**Description:** The client calls this to send data to the server and wait for a reply.
-*   `smsg`: The buffer containing the data you want to send.
-*   `rmsg`: The buffer where the OS will place the server's reply data once it arrives.
+**Description:** The client calls this to send data to the server and wait for a reply. Puts the client into **Reply Blocked** state until the server calls `MsgReply`.
+**Parameters:**
+*   `coid`: The Connection ID returned by `ConnectAttach`. Identifies which server to send to.
+*   `smsg`: A pointer to the buffer containing the message data you want to send.
+*   `sbytes`: The size of the send buffer in bytes. Typically `sizeof(your_msg_struct)`.
+*   `rmsg`: A pointer to the buffer where the server's reply data will be stored once it arrives.
+*   `rbytes`: The size of the reply buffer in bytes. Typically `sizeof(your_reply_struct)`.
 *   **Blocking:** The calling thread is suspended until the server explicitly replies.
 
 ### 5. `MsgReply` (Server Side)
 **Signature:** `int MsgReply(int rcvid, int status, const void *msg, int nbytes);`
-**Description:** The server calls this to send the results back to the client and wake the client up.
-*   `rcvid`: The specific ID returned by `MsgReceive` so the OS knows which sleeping client to wake up.
-*   `msg`: The buffer containing the reply data.
+**Description:** The server calls this to send the results back to the client and wake it up from **Reply Blocked** state.
+**Parameters:**
+*   `rcvid`: The Receive ID returned by `MsgReceive`. The OS uses this to identify exactly which sleeping client to wake up.
+*   `status`: An integer status code returned to the client (returned as the return value of `MsgSend`). Use `EOK` (0) for success.
+*   `msg`: A pointer to the buffer containing the reply data to send back to the client.
+*   `nbytes`: The size of the reply buffer in bytes. Typically `sizeof(your_reply_struct)`.
