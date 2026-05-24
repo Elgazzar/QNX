@@ -26,6 +26,18 @@ The client no longer needs to know the PID or CHID. It just asks the OS to find 
 Once `name_open` succeeds, the name resolution is completely finished. The client uses the exact same `MsgSend` API as before.
 Because `name_open` returns a standard `coid`, all IPC from that point forward is identical to raw channel IPC. It is just as fast and has zero overhead compared to `ConnectAttach`.
 
+## 4. Handling Client Disconnects (`_PULSE_CODE_DISCONNECT` & `ConnectDetach`)
+When a server uses `name_attach`, the OS tracks all clients connected to that name. When a client calls `name_close(coid)` or crashes, the QNX kernel automatically sends a system pulse to the server's channel with the code `_PULSE_CODE_DISCONNECT`.
+
+**CRITICAL RULE:** If the server receives a `_PULSE_CODE_DISCONNECT` pulse, it **must** extract the server connection ID (`scoid`) from the pulse and call `ConnectDetach(pulse.scoid)`. If the server fails to do this, the kernel resources allocated for that client connection will leak, eventually crashing the server.
+
+```c
+if (rcvid == 0 && pulse.code == _PULSE_CODE_DISCONNECT) {
+    // The client left! We MUST clean up the server-side connection block.
+    ConnectDetach(pulse.scoid); 
+}
+```
+
 ---
 
 ## Summary of the Workflow
