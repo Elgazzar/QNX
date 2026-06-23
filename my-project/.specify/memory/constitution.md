@@ -1,8 +1,8 @@
 <!--
 Sync Impact Report:
-- Version change: 1.1.2 → 1.1.3
+- Version change: 1.1.3 → 1.1.4
 - Modified principles: N/A
-- Added sections: N/A
+- Added sections: Development Workflow (Use Case Catalog)
 - Removed sections: N/A
 - Templates requiring updates: 
   ✅ .specify/templates/plan-template.md
@@ -45,6 +45,7 @@ All examples MUST be built and compiled using the QNX Momentics IDE.
 
 - **Creating a new example**: Create a folder, write the code, write the `.md` documentation.
 - **Repository Catalog**: The root `README.md` MUST be updated to include a description of the new example and a link to its documentation.
+- **Use Case Catalog**: The root `USAGE.md` MUST be updated to include a practical, real-world use case (especially targeting Adaptive AUTOSAR) for the new example.
 - **Review**: Ensure documentation accurately reflects the code and specifically calls out QNX/Adaptive AUTOSAR APIs.
 
 ## Governance
@@ -52,4 +53,4 @@ All examples MUST be built and compiled using the QNX Momentics IDE.
 - All additions must adhere to the folder structure and documentation requirements.
 - PRs without the accompanying `.md` documentation will not be merged.
 
-**Version**: 1.1.3 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.4 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23

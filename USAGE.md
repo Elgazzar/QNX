@@ -47,3 +47,11 @@ This guide explains the **practical real-world applications** and **use cases** 
 ### 11. High Resolution Timers (`High_Resolution_Timers`)
 - **Concept**: Bypassing kernel coalescing via `TIMER_TOLERANCE` for sub-millisecond precision.
 - **Practical Use Case**: Strict Time-Division Multiple Access (TDMA) network schedules where Ethernet frames must be placed on the wire at exact microsecond boundaries, or high-frequency motor control loops where milliseconds of delay could cause physical hardware damage.
+
+### 12. Design Considerations (`Design_Considerations`)
+- **Concept**: Scheduling drift accumulation vs deterministic POSIX timers.
+- **Practical Use Case**: Essential knowledge for all cyclic execution tasks. Ensures Adaptive AUTOSAR components, like a 100Hz diagnostic monitor, don't gradually drift out of phase and miss their required hardware interaction windows.
+
+### 13. Timer Frequency Issues (`Timer_Frequancy_Issues`)
+- **Concept**: Timer aliasing, tick boundary rounding, and frequency error.
+- **Practical Use Case**: Preventing strict timing violations. If an Adaptive AUTOSAR component requests a 2.5ms loop for parsing CAN frames on a 1ms kernel tick, it will actually run at 3ms, completely failing its real-time requirements. This example teaches engineers to align thread frequencies with the `ClockPeriod` or use HRTs.

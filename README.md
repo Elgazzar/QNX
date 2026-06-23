@@ -52,6 +52,14 @@ The examples are structured logically from **easiest to hardest**, building up f
 *   **Description:** Demonstrates how to bypass kernel timer coalescing to achieve sub-millisecond precision. Explores the `TIMER_TOLERANCE` flag and how to instruct the microkernel to program the hardware timer directly for high-frequency, strict real-time execution.
 *   **Documentation:** [`High_Resolution_Timers/HR_Timer_API_Usage.md`](High_Resolution_Timers/HR_Timer_API_Usage.md)
 
+### 12. Design Considerations: Drift & Delays (`Design_Considerations`)
+*   **Description:** Explores scheduling drift and compares a naive `delay()` loop against a deterministic POSIX timer for periodic thread execution.
+*   **Documentation:** [`Design_Considerations/Delay_vs_Timers_Usage.md`](Design_Considerations/Delay_vs_Timers_Usage.md)
+
+### 13. Timer Frequency Issues & Aliasing (`Timer_Frequancy_Issues`)
+*   **Description:** Demonstrates the quantization effects of requesting a fractional timer interval (e.g., 1.5ms) on a 1ms system tick grid, and why it causes massive frequency errors.
+*   **Documentation:** [`Timer_Frequancy_Issues/Timer_Frequancy_Issues_Usage.md`](Timer_Frequancy_Issues/Timer_Frequancy_Issues_Usage.md)
+
 ---
 
 ## 📝 Usage Notes
