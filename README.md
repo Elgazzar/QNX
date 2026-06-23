@@ -66,6 +66,12 @@ The examples are structured logically from **easiest to hardest**, building up f
 
 ---
 
+## 📚 General Knowledge Base
+
+*   [**General QNX Information**](General_Information.md): Covers essential non-code concepts like thread priority scales, scheduling rules, and the definition of QNX Processor Clusters.
+
+---
+
 ## 📝 Usage Notes
 *   **C vs C++:** Because QNX system APIs are written in C, many of the `.cpp` files in this workspace utilize standard, procedural C coding styles.
 *   **Portability:** While many examples use standard POSIX APIs (like `pthread_create`), several examples (Atomic Operations, Message Passing, Death Pulse) are highly proprietary to the QNX architecture and will not compile on standard Linux/Windows without abstraction layers.
