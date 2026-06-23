@@ -129,3 +129,75 @@ If you are coming from a traditional Linux or Unix background, this pathname res
 
 *   **Linux/Unix (Monolithic):** Pathname resolution is entirely handled **inside the kernel** by the Virtual File System (VFS). When an application calls `open()`, it triggers a system call that jumps into kernel space. The kernel parses the path, interacts directly with the monolithic file system or device drivers (which are also inside the kernel), and returns a file descriptor.
 *   **QNX (Microkernel):** Pathname resolution is handled largely in **user-space** via Message Passing. The microkernel itself has absolutely no concept of files, paths, or directories. It only knows how to route messages. When an application calls `open()`, the C library sends a message to the Process Manager (to resolve the prefix) and then sends a follow-up message directly to the user-space Resource Manager (driver) that owns that path. The kernel simply acts as the message courier.
+
+---
+
+## 5. QNX Security & Permissions
+
+Because QNX is POSIX-compliant, it utilizes standard **Unix-style permissions** for all files, directories, and devices (Resource Managers). 
+
+### Permission Structure
+Permissions are divided into three standard categories:
+*   **User (Owner)**
+*   **Group**
+*   **Other (World)**
+
+Each of these categories is assigned permissions for:
+*   **Read (r)**
+*   **Write (w)**
+*   **Execute/Search (x)** (Execute for binaries, Search for traversing directories).
+
+### Root Execution & The Boot Image
+When a QNX system boots, everything launched directly from the **Image File System (IFS)** boot script runs as `root` (User ID `0`) by default. Running an entire system as root is a massive security vulnerability.
+
+To drop privileges and run applications as standard users, you must change this default behavior using:
+1.  **Launcher Programs:** Custom utilities that launch child processes with lower privileges.
+2.  **`login` Utilities:** Standard Unix-style login prompts.
+3.  **C APIs:** Using `setuid()`, `seteuid()`, and related standard C library calls within the application code to drop root privileges immediately after initialization.
+4.  **`setuid` Executables:** Setting the SUID bit on the file permissions so the binary drops/changes permissions upon execution.
+
+### Fine-Grained Privileges (`procmgr_ability`)
+Instead of running a process entirely as `root` just to perform a single privileged action, QNX allows you to enforce the **Principle of Least Privilege** using the `procmgr_ability()` API.
+
+This API allows an unprivileged application (or a root launcher program configuring a child process) to request or grant specific, fine-grained kernel abilities. For example:
+*   `PROCMGR_AID_PRIORITY`: Allows an unprivileged thread to raise its priority above the default unprivileged ceiling of 63.
+*   `PROCMGR_AID_IO`: Allows a process to request I/O privileges (via `ThreadCtl`) to access raw hardware registers.
+*   `PROCMGR_AID_SPAWN_SETUID`: Allows a process to spawn children as a different user ID.
+
+By using `procmgr_ability()`, you can run a custom hardware driver as a completely standard, unprivileged user, while selectively granting it only the exact `PROCMGR_AID_IO` ability it needs to function safely!
+
+### The Danger of `qconn`
+During development, you will heavily rely on a daemon called **`qconn`** (the QNX target agent). `qconn` allows the QNX Momentics IDE to deploy code, debug, and profile the target system. 
+
+> [!WARNING]
+> By default, `qconn` **runs as root and launches everything as root**. While this is extremely convenient for development and debugging, it completely bypasses the OS security model. **`qconn` should NEVER be running on a released production system!**
+
+### Security Policies & System Integration
+While QNX provides powerful mechanisms like Unix permissions and `procmgr_ability`, it also utilizes comprehensive **Security Policies** (like `secpol`). 
+
+Why are System-Level Security Policies needed?
+*   **The Developer's Blindspot:** Individual component developers often do not, and cannot, know the final deployment environment or use-case of the specific binary they are writing. 
+*   **The Integrator's Responsibility:** The final responsibility for the safety and security of the entire device falls squarely on the **System Integrator** (the team assembling the final OS image), not the individual component developers.
+*   **Centralized Control:** Security policies solve this by shifting the control of system security away from individual components and centralizing it at the **System Integration level**. 
+
+By using security policies, the System Integrator can forcefully restrict exactly what resources a component can access (which files it can read, which channels it can attach to, which abilities it can request) without having to modify or trust the underlying component's code.
+
+### How Security Policies are Defined
+A QNX security policy starts its life as a **host-side text file**. This text file is written in a human-readable policy language that outlines all the security rules for the system. 
+
+During the system build process, the QNX compiler takes this text file and compiles it into a highly optimized **target-side binary policy file** that the OS can parse instantly at runtime.
+
+At a high level, this policy file primarily defines two things:
+1.  **Security Types:** Abstract labels (like `network_driver_t`, `audio_app_t`, `secure_storage_t`) that are assigned to specific processes, files, or system channels.
+2.  **Privileges:** The exact rules governing what each type is allowed to do. For example, it explicitly defines whether the `audio_app_t` type is allowed to send an IPC message to the `network_driver_t` type, or if it is allowed to request a specific `procmgr_ability`.
+
+### Security Policy Software Components
+Managing these security policies involves specific utilities spread across your development host and the QNX target:
+
+**Host-Side Tools (Development Machine):**
+*   `secpolgenerate`: A powerful tool that analyzes audit logs from a running test system to automatically generate a baseline text policy.
+*   `secpolcompile`: A compiler utility that takes your human-readable text policy and compiles it down into the optimized binary policy file.
+
+**Target-Side Tools (QNX System):**
+*   `secpolpush`: A utility used to push (install) the compiled binary policy directly into the running QNX microkernel.
+*   `secpol`: A diagnostic utility used on the target to examine the currently active binary policy for debugging purposes.
