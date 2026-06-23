@@ -60,6 +60,10 @@ The examples are structured logically from **easiest to hardest**, building up f
 *   **Description:** Demonstrates the quantization effects of requesting a fractional timer interval (e.g., 1.5ms) on a 1ms system tick grid, and why it causes massive frequency errors.
 *   **Documentation:** [`Timer_Frequancy_Issues/Timer_Frequancy_Issues_Usage.md`](Timer_Frequancy_Issues/Timer_Frequancy_Issues_Usage.md)
 
+### 14. Kernel Timeouts (`Kernel_Timeouts`)
+*   **Description:** Demonstrates how to use `TimerTimeout()` to prevent threads from blocking indefinitely on kernel calls (like `MsgReceive` or `MsgSend`), providing a critical fail-safe for robust RTOS design.
+*   **Documentation:** [`Kernel_Timeouts/Kernel_Timeouts_Usage.md`](Kernel_Timeouts/Kernel_Timeouts_Usage.md)
+
 ---
 
 ## 📝 Usage Notes

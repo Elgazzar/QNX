@@ -55,3 +55,7 @@ This guide explains the **practical real-world applications** and **use cases** 
 ### 13. Timer Frequency Issues (`Timer_Frequancy_Issues`)
 - **Concept**: Timer aliasing, tick boundary rounding, and frequency error.
 - **Practical Use Case**: Preventing strict timing violations. If an Adaptive AUTOSAR component requests a 2.5ms loop for parsing CAN frames on a 1ms kernel tick, it will actually run at 3ms, completely failing its real-time requirements. This example teaches engineers to align thread frequencies with the `ClockPeriod` or use HRTs.
+
+### 14. Kernel Timeouts (`Kernel_Timeouts`)
+- **Concept**: Bounding blocking kernel calls using `TimerTimeout()` and `SIGEV_UNBLOCK`.
+- **Practical Use Case**: Fail-safe IPC recovery. If an Adaptive AUTOSAR client application sends an RPC request via `MsgSend()` to an Execution Manager that has deadlocked, `TimerTimeout()` ensures the client unblocks after 50ms instead of hanging forever, allowing it to gracefully alert the system of a failure.
