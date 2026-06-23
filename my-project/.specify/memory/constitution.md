@@ -1,7 +1,7 @@
 <!--
 Sync Impact Report:
-- Version change: 1.1.0 → 1.1.1
-- Modified principles: III. Mandatory Documentation
+- Version change: 1.1.2 → 1.1.3
+- Modified principles: N/A
 - Added sections: N/A
 - Removed sections: N/A
 - Templates requiring updates: 
@@ -39,11 +39,12 @@ All examples MUST be built and compiled using the QNX Momentics IDE.
 
 - **Example Folder Naming**: Descriptive and consistent (e.g., `01-thread-creation`, `02-ipc-message-queues`).
 - **Documentation (`README.md` or `usage.md`)**: Must include a brief description, an explanation of the underlying concepts and how the example works, an API list, compilation instructions, and execution instructions.
-- **Code Comments**: Complex QNX APIs must be annotated with explanatory comments.
+- **Code Comments**: Every single line of code in the example MUST have a comment before it that describes exactly what the code does.
 
 ## Development Workflow
 
 - **Creating a new example**: Create a folder, write the code, write the `.md` documentation.
+- **Repository Catalog**: The root `README.md` MUST be updated to include a description of the new example and a link to its documentation.
 - **Review**: Ensure documentation accurately reflects the code and specifically calls out QNX/Adaptive AUTOSAR APIs.
 
 ## Governance
@@ -51,4 +52,4 @@ All examples MUST be built and compiled using the QNX Momentics IDE.
 - All additions must adhere to the folder structure and documentation requirements.
 - PRs without the accompanying `.md` documentation will not be merged.
 
-**Version**: 1.1.1 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.3 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23

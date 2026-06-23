@@ -44,6 +44,14 @@ The examples are structured logically from **easiest to hardest**, building up f
 *   **Description:** The most advanced QNX-specific topic. Demonstrates how to securely register a private channel with the QNX Process Manager to receive asynchronous, unblocked "Pulses" notifying the app whenever any other process in the system dies.
 *   **Documentation:** [`Death_Pulse/Docs/death_pulse.md`](Death_Pulse/Docs/death_pulse.md)
 
+### 10. System Timers & Pulses (`Timers`)
+*   **Description:** Explores the QNX POSIX timer APIs (`timer_create`, `timer_settime`) and tickless architecture. Demonstrates how to configure timers and handle expiration events utilizing the QNX-preferred `SIGEV_PULSE` notification mechanism directly from the microkernel.
+*   **Documentation:** [`Timers/Timer_API_Usage.md`](Timers/Timer_API_Usage.md)
+
+### 11. High Resolution Timers (`High_Resolution_Timers`)
+*   **Description:** Demonstrates how to bypass kernel timer coalescing to achieve sub-millisecond precision. Explores the `TIMER_TOLERANCE` flag and how to instruct the microkernel to program the hardware timer directly for high-frequency, strict real-time execution.
+*   **Documentation:** [`High_Resolution_Timers/HR_Timer_API_Usage.md`](High_Resolution_Timers/HR_Timer_API_Usage.md)
+
 ---
 
 ## 📝 Usage Notes
