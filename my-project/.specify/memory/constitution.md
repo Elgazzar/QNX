@@ -1,8 +1,8 @@
 <!--
 Sync Impact Report:
-- Version change: [NEW_INIT] → 1.0.0
-- Modified principles: N/A (Initial Setup)
-- Added sections: Core Principles, Example Structure Requirements, Development Workflow, Governance
+- Version change: 1.1.0 → 1.1.1
+- Modified principles: III. Mandatory Documentation
+- Added sections: N/A
 - Removed sections: N/A
 - Templates requiring updates: 
   ✅ .specify/templates/plan-template.md
@@ -24,17 +24,21 @@ Every example MUST reside in its own dedicated folder.
 **Rationale**: Keeps examples isolated and prevents cross-contamination of code, making it easier for learners to focus on one concept at a time.
 
 ### III. Mandatory Documentation
-Every example folder MUST contain a `.md` file describing the example's usage and the specific APIs utilized.
+Every example folder MUST contain a `.md` file describing the example's usage, an explanation of how the example works conceptually, and the specific APIs utilized.
 **Rationale**: Ensures that the intent, usage instructions, and the underlying QNX/Autosar concepts are clearly understood without needing to parse the code immediately.
 
 ### IV. Adaptive AUTOSAR Focus
 Examples SHOULD primarily target features and APIs relevant to QNX for Adaptive AUTOSAR.
 **Rationale**: The repository's main purpose is to build competency specifically in Adaptive AUTOSAR over QNX.
 
+### V. IDE & Build Tooling
+All examples MUST be built and compiled using the QNX Momentics IDE.
+**Rationale**: Using the officially supported IDE ensures a standardized development environment, guarantees compatibility with QNX toolchains, and allows examples to leverage IDE-generated configurations (like `.cproject` and `Makefile`s).
+
 ## Example Structure Requirements
 
 - **Example Folder Naming**: Descriptive and consistent (e.g., `01-thread-creation`, `02-ipc-message-queues`).
-- **Documentation (`README.md` or `usage.md`)**: Must include a brief description, API list, compilation instructions, and execution instructions.
+- **Documentation (`README.md` or `usage.md`)**: Must include a brief description, an explanation of the underlying concepts and how the example works, an API list, compilation instructions, and execution instructions.
 - **Code Comments**: Complex QNX APIs must be annotated with explanatory comments.
 
 ## Development Workflow
@@ -47,4 +51,4 @@ Examples SHOULD primarily target features and APIs relevant to QNX for Adaptive 
 - All additions must adhere to the folder structure and documentation requirements.
 - PRs without the accompanying `.md` documentation will not be merged.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
+**Version**: 1.1.1 | **Ratified**: 2026-06-23 | **Last Amended**: 2026-06-23
