@@ -1,0 +1,3 @@
+BOOT_MODE=bios
+NUM_CPU=2
+MACADDR=52:54:00:d1:ba:41

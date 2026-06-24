@@ -8,3 +8,5 @@ QNX_vm/
 # Build artifacts and directories
 *.o
 build/
+vm2/output/
+vm2/local/vbox_files/

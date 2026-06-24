@@ -69,6 +69,7 @@ The examples are structured logically from **easiest to hardest**, building up f
 ## 📚 General Knowledge Base
 
 *   [**General QNX Information**](General_Information.md): Covers essential non-code concepts like thread priority scales, scheduling rules, and the definition of QNX Processor Clusters.
+*   [**Boot Architecture & Images**](QNX_Boot_Architecture.md): Covers how a QNX system boots, what an OS Image is, and how the `mkifs` utility generates the image from a `.build` file.
 
 ---
 
